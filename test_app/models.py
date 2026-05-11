@@ -40,6 +40,14 @@ class Book(models.Model):
 # )
 # """
 
+gender_choices = [
+    #(Первое пойдет в базу данных, второе будет видеть пользователь)
+    ('M', 'Male'),
+    ('F', 'Female'),
+    ('na', 'N/A'),
+]
+
+
 class Author(models.Model):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=35)
@@ -48,7 +56,7 @@ class Author(models.Model):
     email = models.EmailField(max_length=75, null=True)
     # URLValidator() "под капотом" будет проверять, что строка начинается с http:// или https://
     website = models.URLField(null=True)
-
+    gender = models.CharField(max_length=10, choices=gender_choices, default='na')
     # Integer fields
     age = models.PositiveSmallIntegerField(null=True)
     followers_count = models.PositiveIntegerField(null=True)
@@ -79,7 +87,7 @@ class Author(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, unique_for_date='created_at')
     content = models.TextField()
 
     #  auto_now_add И auto_now параметры "под капотом" автоматичеки ставят ещё и параметр editable = False
