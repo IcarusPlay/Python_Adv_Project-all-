@@ -3,9 +3,23 @@ from django.db import models
 # def get_disc_price_according_orig_price():
 #     ...
 
+
+languages = [
+    ('en', 'English'),
+    ('ua', 'Ukrainian'),
+    ('de', 'German'),
+]
+
+genres = [
+    ('fiction', 'Fiction'),
+    ('triller', 'Triller'),
+]
+
 class Book(models.Model):
     title = models.CharField(max_length=100)  # VarChar(255)
     description = models.TextField()
+    language = models.CharField(max_length=30, choices=languages, null=True, blank=True)
+    genre = models.CharField(max_length=30, choices=genres, null=True, blank=True)
     price = models.FloatField()
     # discounted_price = models.FloatField()  # NOT NULL
     # discounted_price = models.FloatField(default=0.0)  # DEFAULT 0.0
@@ -26,6 +40,37 @@ class Book(models.Model):
 
         related_name='books'
     )
+
+    def __str__(self):
+        return f"{self.title} {self.id}"
+    
+    class Meta:
+        db_table = 'books'
+
+        verbose_name = 'BOOK'
+        verbose_name_plural = 'BOOKS'
+        ordering = ['-published_date', 'title']
+
+        get_latest_by = 'published_date'
+
+        # unique_together = ('title', 'author')
+
+        indexes = [
+            models.Index(
+                fields=['genre', 'language'],
+                name='books_genre_language_idx'
+            )
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='books_title_author_uqcst'
+            )
+
+        ]
+
+
 
 # Миграции и управление моделями отвечают ИСКЛЮЧИТЕЛЬНО ЗА DDL категорию запросов
 
@@ -69,6 +114,14 @@ class Author(models.Model):
     )  #  1.00 | 3.75 | 5.00 | 4.99 | 2.01
     monetisation_income = models.FloatField(null=True)
 
+    def __str__(self):
+        # И.Ф
+
+        return f"{self.first_name[0]}. {self.last_name}"
+
+    class Meta:
+        db_table = 'authors'
+
 # monday = 14.99
 # friday = 14.999999999999999999999999
 # nickname = 'QnWr8AoKs' => 'qnwr8aoks'
@@ -96,6 +149,14 @@ class Post(models.Model):
     reading_time = models.DurationField(
         null=True
     )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = 'posts'
+
+
 
 
 
