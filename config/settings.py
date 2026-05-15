@@ -56,6 +56,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+# AUTH_USER_MODEL = '<app label>.<model name>'
+# AUTH_USER_MODEL = 'django.contrib.auth.User'
+AUTH_USER_MODEL = 'test_app.User'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
