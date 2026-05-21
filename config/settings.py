@@ -9,38 +9,46 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-import os.path
+
 from pathlib import Path
 from environ import Env
+
+env = Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = Env()
-env.read_env(BASE_DIR /".env")
-SECRET_KEY = env.str("SECRET_KEY")
-DEBUG = env.bool('DEBUG')
-
+env.read_env(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env.str('DEBUG')
+# DEBUG = False
 
-ALLOWED_HOSTS = env.str("ALLOWED_HOSTS").split(',')
+ALLOWED_HOSTS = env.str('ALLOWED_HOSTS').split(',')
+# ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'my.domain.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # default system apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 3rd-party
+
+    # local
+    # 'test_app',
     'test_app.apps.TestAppConfig',
 ]
 
@@ -58,12 +66,14 @@ ROOT_URLCONF = 'config.urls'
 
 # AUTH_USER_MODEL = '<app label>.<model name>'
 # AUTH_USER_MODEL = 'django.contrib.auth.User'
+# тут мы указываем DJango какую именно модель из какого приложения мы берём для работы с пользователями
+# по дефолту Django как раз работает со своим пользователем, нам это не подходит
 AUTH_USER_MODEL = 'test_app.User'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,10 +87,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
 
 if env.bool('USE_REMOTE'):
     DATABASES = {
@@ -95,11 +103,26 @@ if env.bool('USE_REMOTE'):
     }
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'my_database.db',
+        },
+
+        # 'secondary': {
+        #     ...
+        # }
     }
-}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'my_database',
+#         'USER': 'test_user',
+#         'PASSWORD': 'super_strong_password123',
+#         'HOST': '127.0.0.1',
+#         'PORT': 3306,
+#     },
+# }
 
 
 # Password validation
@@ -118,22 +141,26 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
-]
-
+    # {
+    #     'NAME': ''
+    # }
+]  # qwe
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-RU'
+# LANGUAGE_CODE = 'uk'
 
-TIME_ZONE = 'CET'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
